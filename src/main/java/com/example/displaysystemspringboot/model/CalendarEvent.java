@@ -8,6 +8,10 @@ public class CalendarEvent {
     private Date endDate;
     private String location;
 
+    public CalendarEvent() {
+        // Default constructor
+    }
+
     public CalendarEvent(String summary, Date startDate, Date endDate, String location) {
         this.summary = summary;
         this.startDate = startDate;
@@ -15,7 +19,6 @@ public class CalendarEvent {
         this.location = location;
     }
 
-    // Getters and setters
     public String getSummary() {
         return summary;
     }

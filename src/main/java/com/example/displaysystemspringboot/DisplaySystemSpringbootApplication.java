@@ -14,20 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 @SpringBootApplication
-@RestController
 public class DisplaySystemSpringbootApplication {
-
-    @GetMapping
-    public String displayCalendar(Model model) {
-        String filePath = "src/main/resources/calendar.ics";
-        try {
-            Calendar calendar = CalendarParser.parseICalFile(filePath);
-            model.addAttribute("events", calendar.getEvents());
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        }
-        return "calender"; // Assuming you have a "calendar.html" template
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(DisplaySystemSpringbootApplication.class, args);
