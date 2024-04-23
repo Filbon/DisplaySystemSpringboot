@@ -21,6 +21,7 @@ public class DisplaySystemSpringbootApplication {
                 System.out.println("Start Date: " + event.getStartDate());
                 System.out.println("End Date: " + event.getEndDate());
                 System.out.println("Location: " + event.getLocation());
+                System.out.println("UID: " + event.getUid());
                 System.out.println("----------------------");
             }
         } catch (ParseException | IOException e) {

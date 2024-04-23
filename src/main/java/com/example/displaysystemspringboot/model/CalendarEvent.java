@@ -7,15 +7,19 @@ public class CalendarEvent {
     private Date startDate;
     private Date endDate;
     private String location;
+    private String uid;
 
-    public CalendarEvent(String summary, Date startDate, Date endDate, String location) {
+    public CalendarEvent(String summary, Date startDate, Date endDate, String location, String uid) {
         this.summary = summary;
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;
+        this.uid = uid;
     }
+    public String getUid() {return uid;}
 
-    // Getters and setters
+    public void setUid(String uid) {this.uid = uid;}
+
     public String getSummary() {
         return summary;
     }
