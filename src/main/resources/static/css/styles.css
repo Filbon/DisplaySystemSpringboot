@@ -1,0 +1,46 @@
+/* Custom styles */
+/* Main Container */
+.calendar-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+/* Calendar Title */
+.calendar-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #323130; /* Dark gray text */
+}
+
+/* Schedule Table */
+.schedule {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Table Header */
+.schedule th {
+  background-color: #0078d4; /* Outlook Blue */
+  color: #fff; /* White text */
+  padding: 12px;
+  text-align: left;
+}
+
+/* Event summary */
+.event-summary {
+  font-weight: bold;
+  color: #323130; /* Dark gray text */
+}
+
+/* Event date */
+.event-date {
+  font-style: italic;
+  color: #0078d4; /* Outlook Blue */
+}
+
+/* Event location */
+.event-location {
+  color: #666; /* Dark gray text */
+}

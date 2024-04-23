@@ -1,18 +1,89 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <title>Calendar Events</title>
+  <link rel="stylesheet" href="https://cdn.kth.se/apps/kth-style/2.7.1/kth-bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Custom styles */
+    /* Main Container */
+    .calendar-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    /* Calendar Title */
+    .calendar-title {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #323130; /* Dark gray text */
+    }
+
+    /* Schedule Table */
+    .schedule {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    /* Table Header */
+    .schedule th {
+      background-color: #0078d4; /* Outlook Blue */
+      color: #fff; /* White text */
+      padding: 12px;
+      text-align: left;
+    }
+
+    /* Event summary */
+    .event-summary {
+      font-weight: bold;
+      color: #323130; /* Dark gray text */
+    }
+
+    /* Event date */
+    .event-date {
+      font-style: italic;
+      color: #0078d4; /* Outlook Blue */
+    }
+
+    /* Event location */
+    .event-location {
+      color: #666; /* Dark gray text */
+    }
+  </style>
 </head>
 <body>
-<h1>Calendar Events</h1>
-<ul>
-  <li th:each="event : ${events}">
-    <p th:text="${event.summary}"></p>
-    <p th:text="${event.startDate}"></p>
-    <p th:text="${event.endDate}"></p>
-    <p th:text="${event.location}"></p>
-  </li>
-</ul>
+<div class="container calendar-container">
+  <h1 class="calendar-title">Calendar Events</h1>
+  <table class="table schedule">
+    <thead>
+    <tr>
+      <th>Event</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Location</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop through each event and populate the table rows -->
+    <tr th:each="event : ${events}" class="event-item">
+      <td class="event-summary">
+        <div th:text="${event.summary}">Event Summary</div>
+      </td>
+      <td class="event-date">
+        <div th:text="${event.startDate}">Start Date</div>
+      </td>
+      <td class="event-date">
+        <div th:text="${event.endDate}">End Date</div>
+      </td>
+      <td class="event-location">
+        <div th:text="${event.location}">Location</div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
 </body>
 </html>
