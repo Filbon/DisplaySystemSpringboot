@@ -2,10 +2,12 @@ package com.example.displaysystemspringboot.model;
 
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 
 import java.util.regex.Matcher;
@@ -14,7 +16,8 @@ import java.util.regex.Pattern;
 @Component
 public class CalendarParser {
     public static Calendar parseICalFile(String content) throws ParseException {
-        Calendar calendar = new Calendar();
+        Calendar calendar = null;
+        List<Calendar> calendars = new ArrayList<>();
 
         String[] lines = content.split("\\r?\\n");
 
@@ -58,7 +61,8 @@ public class CalendarParser {
                 isParsingSummary = false; // Stop parsing the summary
                 isParsingUid = false;
             } else if (line.startsWith("LOCATION:") && location == null) {
-                location = line.substring("LOCATION:".length()).trim();
+                // Handle special characters or escape sequences in the location field
+                location = parseLocation(line.substring("LOCATION:".length()).trim());
                 isParsingSummary = false; // Stop parsing the summary
                 isParsingUid = false;
             } else if (isParsingSummary && line.startsWith(" ")) {
@@ -69,11 +73,35 @@ public class CalendarParser {
                 // Append continuation lines to the location
                 location += line.trim();
             } else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null) {
+                // Create a new calendar if it's the first event or the location changes
+                if (calendar == null || !Objects.equals(calendar.getLocation(), location)) {
+                    calendar = new Calendar(location);
+                    calendars.add(calendar);
+                }
                 calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
             }
         }
 
-        return calendar;
+        // For simplicity, return the first calendar found (assuming all events belong to the same location)
+        return calendars.isEmpty() ? null : calendars.get(0);
+    }
+
+    private static String parseLocation(String location) {
+        // Extract the portion before the first comma
+        int commaIndex = location.indexOf(",");
+        if (commaIndex != -1) {
+            location = location.substring(0, commaIndex);
+        }
+
+        // Remove the last backslash if it exists
+        if (location.endsWith("\\")) {
+            location = location.substring(0, location.length() - 1);
+        }
+
+        // Remove leading and trailing whitespace
+        location = location.trim();
+
+        return location;
     }
 
 

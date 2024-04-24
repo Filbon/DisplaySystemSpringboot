@@ -1,0 +1,63 @@
+/* CSS for calendar styling */
+
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2; /* Light gray */
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #005b9a; /* KTH blue */
+}
+
+/* Calendar container */
+.calendars {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Calendar styling */
+.calendar {
+    margin-bottom: 30px;
+    background-color: #fff; /* White */
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+/* Event table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ddd; /* Light gray */
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #005b9a; /* KTH blue */
+    font-weight: bold;
+    color: #fff; /* White */
+}
+
+/* Styling for the upcoming event */
+.upcoming-event {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #005b9a; /* KTH blue */
+}
+
+/* Styling for the first event */
+.calendar td:first-child {
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: #eaf1fb; /* Light blue */
+}

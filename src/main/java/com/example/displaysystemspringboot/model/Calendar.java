@@ -2,12 +2,21 @@ package com.example.displaysystemspringboot.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Calendar {
     private List<CalendarEvent> events;
+    private String id;
+    private String location;
 
-    public Calendar() {
+    public Calendar(String location) {
         this.events = new ArrayList<>();
+        this.id = UUID.randomUUID().toString();
+        this.location = location;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void addEvent(CalendarEvent event) {
@@ -23,5 +32,9 @@ public class Calendar {
         return "Calendar{" +
                 "events=" + events +
                 '}';
+    }
+
+    public String getLocation() {
+        return location;
     }
 }

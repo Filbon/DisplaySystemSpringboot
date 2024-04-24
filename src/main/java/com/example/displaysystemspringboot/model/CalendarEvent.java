@@ -51,4 +51,15 @@ public class CalendarEvent {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "CalendarEvent{" +
+                "summary='" + summary + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", location='" + location + '\'' +
+                ", uid='" + uid + '\'' +
+                '}';
+    }
 }

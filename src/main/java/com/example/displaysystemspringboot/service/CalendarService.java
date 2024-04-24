@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class CalendarService {
@@ -21,8 +22,8 @@ public class CalendarService {
     private CalendarParser calendarParser; // Autowiring CalendarParser
 
     @PostConstruct
-    public CompletableFuture<List<String>> getCalendar() {
-        CompletableFuture<List<String>> future = new CompletableFuture<>();
+    public CompletableFuture<List<Calendar>> getCalendars() {
+        CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
 
         List<String> urls = Arrays.asList(
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
@@ -30,51 +31,38 @@ public class CalendarService {
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics"
         );
 
-        List<String> allEvents = new ArrayList<>();
-        AtomicInteger count = new AtomicInteger(urls.size());
+        List<CompletableFuture<Calendar>> calendarFutures = new ArrayList<>();
 
         for (String url : urls) {
-            IcsFetcher.startFetching(url, content -> {
-                try {
-                    List<String> events = parseCalendarContent(content);
-                    synchronized (allEvents) {
-                        allEvents.addAll(events);
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (count.decrementAndGet() == 0) {
-                        future.complete(allEvents);
-                    }
-                }
-            });
+            CompletableFuture<Calendar> calendarFuture = fetchAndParseCalendar(url);
+            calendarFutures.add(calendarFuture);
         }
+
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(
+                calendarFutures.toArray(new CompletableFuture[0])
+        );
+
+        allOf.thenApply((Void) -> {
+            List<Calendar> calendars = calendarFutures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList());
+            future.complete(calendars);
+            return null;
+        });
 
         return future;
     }
 
-    private List<String> parseCalendarContent(String content) throws ParseException {
-        // Use the autowired CalendarParser instance to parse the content
-        Calendar calendar = calendarParser.parseICalFile(content);
-
-        // Print out details of each parsed event
-        System.out.println("Parsed Events:");
-        for (CalendarEvent event : calendar.getEvents()) {
-            System.out.println("Summary: " + event.getSummary());
-            System.out.println("Start Date: " + event.getStartDate());
-            System.out.println("End Date: " + event.getEndDate());
-            System.out.println("Location: " + event.getLocation());
-            System.out.println("UID: " + event.getUid());
-            System.out.println();
-        }
-
-        // Construct a list of event summaries to return
-        List<String> eventSummaries = new ArrayList<>();
-        for (CalendarEvent event : calendar.getEvents()) {
-            eventSummaries.add(event.getSummary());
-        }
-
-        return eventSummaries;
+    private CompletableFuture<Calendar> fetchAndParseCalendar(String url) {
+        CompletableFuture<Calendar> future = new CompletableFuture<>();
+        IcsFetcher.startFetching(url, content -> {
+            try {
+                Calendar calendar = calendarParser.parseICalFile(content);
+                future.complete(calendar);
+            } catch (ParseException e) {
+                future.completeExceptionally(e);
+            }
+        });
+        return future;
     }
-
 }
