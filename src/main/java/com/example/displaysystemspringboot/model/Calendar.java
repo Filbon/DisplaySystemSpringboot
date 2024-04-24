@@ -17,4 +17,11 @@ public class Calendar {
     public List<CalendarEvent> getEvents() {
         return events;
     }
+
+    @Override
+    public String toString() {
+        return "Calendar{" +
+                "events=" + events +
+                '}';
+    }
 }

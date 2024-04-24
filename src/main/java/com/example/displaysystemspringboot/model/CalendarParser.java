@@ -1,34 +1,19 @@
 package com.example.displaysystemspringboot.model;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.springframework.stereotype.Component;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class CalendarParser {
-    public static Calendar parseICalFile(String filePath) throws IOException, ParseException {
-        String content;
-        try {
-            content = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
+    public static Calendar parseICalFile(String content) throws ParseException {
         Calendar calendar = new Calendar();
 
         String[] lines = content.split("\\r?\\n");

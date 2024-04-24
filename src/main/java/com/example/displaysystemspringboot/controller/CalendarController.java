@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping(path = "api/v1/room")
@@ -20,12 +21,7 @@ public class CalendarController {
     }
 
     @GetMapping
-    public List<String> getCal() {
-        List<String> list = new ArrayList<>();
-        calendarService.getCalendar(content -> {
-            // Add fetched content to the list
-            list.add(content);
-        });
-        return list;
+    public CompletableFuture<List<String>> getCal() {
+        return calendarService.getCalendar();
     }
 }
