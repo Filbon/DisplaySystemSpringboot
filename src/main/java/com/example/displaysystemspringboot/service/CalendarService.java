@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class CalendarService {
@@ -21,11 +23,33 @@ public class CalendarService {
     @PostConstruct
     public CompletableFuture<List<String>> getCalendar() {
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        IcsFetcher.startFetching("https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics", content -> {
-            // Transform the fetched content if needed
-            List<String> events = parseCalendarContent(content);
-            future.complete(events);
-        });
+
+        List<String> urls = Arrays.asList(
+                "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
+                "https://webmail.kth.se/owa/calendar/sth_plan7_7005@ug.kth.se/Calendar/calendar.ics",
+                "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics"
+        );
+
+        List<String> allEvents = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(urls.size());
+
+        for (String url : urls) {
+            IcsFetcher.startFetching(url, content -> {
+                try {
+                    List<String> events = parseCalendarContent(content);
+                    synchronized (allEvents) {
+                        allEvents.addAll(events);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (count.decrementAndGet() == 0) {
+                        future.complete(allEvents);
+                    }
+                }
+            });
+        }
+
         return future;
     }
 
