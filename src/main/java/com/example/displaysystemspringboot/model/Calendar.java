@@ -15,6 +15,10 @@ public class Calendar {
         this.location = location;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String getId() {
         return id;
     }
