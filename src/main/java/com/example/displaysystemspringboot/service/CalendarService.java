@@ -28,7 +28,8 @@ public class CalendarService {
         List<String> urls = Arrays.asList(
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7005@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics"
+                "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics",
+                "https://webmail.kth.se/owa/calendar/sth_plan7_7327@ug.kth.se/Calendar/calendar.ics"
         );
 
         List<CompletableFuture<Calendar>> calendarFutures = new ArrayList<>();

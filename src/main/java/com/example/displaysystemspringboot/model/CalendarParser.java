@@ -87,10 +87,12 @@ public class CalendarParser {
     }
 
     private static String parseLocation(String location) {
-        // Extract the portion before the first comma
-        int commaIndex = location.indexOf(",");
-        if (commaIndex != -1) {
-            location = location.substring(0, commaIndex);
+        // Find the index of the first whitespace character
+        int whitespaceIndex = location.indexOf(" ");
+
+        // If whitespace found, cutoff the string from that index
+        if (whitespaceIndex != -1) {
+            location = location.substring(0, whitespaceIndex);
         }
 
         // Remove the last backslash if it exists
@@ -98,11 +100,9 @@ public class CalendarParser {
             location = location.substring(0, location.length() - 1);
         }
 
-        // Remove leading and trailing whitespace
-        location = location.trim();
-
         return location;
     }
+
 
 
     private static Date parseDate(String dateString, String nextLine) throws ParseException {
