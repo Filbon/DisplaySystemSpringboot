@@ -92,6 +92,9 @@ public class CalendarParser {
         if (whitespaceIndex != -1) {
             location = location.substring(0, whitespaceIndex);
         }
+        if (location.endsWith(",")) {
+            location = location.substring(0, location.length() - 1);
+        }
         if (location.endsWith("\\")) {
             location = location.substring(0, location.length() - 1);
         }
