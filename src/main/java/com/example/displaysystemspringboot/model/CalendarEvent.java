@@ -1,12 +1,29 @@
 package com.example.displaysystemspringboot.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Date;
 
+@Document(collection = "calendar_events")
 public class CalendarEvent {
+    @Id // Marks the field as the primary identifier
+    private String id;
+
+    @Field("summary") // Specifies the name of the field in the MongoDB document
     private String summary;
+
+    @Field("start_date") // Example of renaming the field in the MongoDB document
     private Date startDate;
+
+    @Field("end_date")
     private Date endDate;
+
+    @Field("location")
     private String location;
+
+    @Field("uid")
     private String uid;
 
     public CalendarEvent(String summary, Date startDate, Date endDate, String location, String uid) {

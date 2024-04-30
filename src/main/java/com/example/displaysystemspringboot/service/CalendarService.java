@@ -3,6 +3,7 @@ package com.example.displaysystemspringboot.service;
 import com.example.displaysystemspringboot.model.Calendar;
 import com.example.displaysystemspringboot.model.CalendarEvent;
 import com.example.displaysystemspringboot.model.CalendarParser;
+import com.example.displaysystemspringboot.repository.CalendarEventRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class CalendarService {
 
     @Autowired
     private CalendarParser calendarParser; // Autowiring CalendarParser
+
+    @Autowired
+    private CalendarEventRepository calendarEventRepository;
 
     @PostConstruct
     public CompletableFuture<List<Calendar>> getCalendars() {
@@ -59,6 +63,10 @@ public class CalendarService {
         IcsFetcher.startFetching(url, content -> {
             try {
                 Calendar calendar = calendarParser.parseICalFile(content);
+                // Save events to the MongoDB database
+                for (CalendarEvent event : calendar.getEvents()) {
+                    calendarEventRepository.save(event);
+                }
                 future.complete(calendar);
             } catch (ParseException e) {
                 future.completeExceptionally(e);
@@ -67,3 +75,4 @@ public class CalendarService {
         return future;
     }
 }
+
