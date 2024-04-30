@@ -82,7 +82,7 @@ public class CalendarParser {
                 }
             }
         }
-
+        System.out.println(calendar);
         // Return all calendars found
         return calendars.isEmpty() ? null : calendars.get(0); // Return the first calendar found (assuming all events belong to the same location)
     }
