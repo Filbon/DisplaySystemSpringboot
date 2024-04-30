@@ -6,14 +6,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
 @Document(collection = "calendars")
 public class Calendar {
-    @Id // Marks the field as the primary identifier
-    private String id;
 
-    @Field("location") // Specifies the name of the field in the MongoDB document
+
+    @Id // Specifies the name of the field in the MongoDB document
     private String location;
 
     @Field("events") // Example of renaming the field in the MongoDB document
@@ -21,7 +20,6 @@ public class Calendar {
 
     public Calendar(String location) {
         this.events = new ArrayList<>();
-        this.id = UUID.randomUUID().toString();
         this.location = location;
     }
 
@@ -29,9 +27,6 @@ public class Calendar {
         this.location = location;
     }
 
-    public String getId() {
-        return id;
-    }
 
     public void addEvent(CalendarEvent event) {
         this.events.add(event);
@@ -50,5 +45,9 @@ public class Calendar {
 
     public String getLocation() {
         return location;
+    }
+
+    public boolean isEmpty() {
+        return events.isEmpty() && Objects.equals(location, "");
     }
 }

@@ -1,5 +1,6 @@
 package com.example.displaysystemspringboot.model;
 
+import com.example.displaysystemspringboot.repository.CalendarRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;

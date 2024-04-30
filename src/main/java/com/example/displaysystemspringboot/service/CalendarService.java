@@ -1,9 +1,8 @@
 package com.example.displaysystemspringboot.service;
 
 import com.example.displaysystemspringboot.model.Calendar;
-import com.example.displaysystemspringboot.model.CalendarEvent;
 import com.example.displaysystemspringboot.model.CalendarParser;
-import com.example.displaysystemspringboot.repository.CalendarEventRepository;
+import com.example.displaysystemspringboot.repository.CalendarRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,22 +12,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
 public class CalendarService {
 
     @Autowired
-    private CalendarParser calendarParser; // Autowiring CalendarParser
+    private CalendarRepository calendarRepository; // Inject Calendar repository
 
     @Autowired
-    private CalendarEventRepository calendarEventRepository;
+    private CalendarParser calendarParser; // Autowiring CalendarParser
+
 
     @PostConstruct
     public CompletableFuture<List<Calendar>> getCalendars() {
-        CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
 
+        CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
         List<String> urls = Arrays.asList(
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
                 "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics",
@@ -37,6 +36,7 @@ public class CalendarService {
         );
 
         List<CompletableFuture<Calendar>> calendarFutures = new ArrayList<>();
+
 
         for (String url : urls) {
             CompletableFuture<Calendar> calendarFuture = fetchAndParseCalendar(url);
@@ -62,11 +62,9 @@ public class CalendarService {
         CompletableFuture<Calendar> future = new CompletableFuture<>();
         IcsFetcher.startFetching(url, content -> {
             try {
-                Calendar calendar = calendarParser.parseICalFile(content);
-                // Save events to the MongoDB database
-                for (CalendarEvent event : calendar.getEvents()) {
-                    calendarEventRepository.save(event);
-                }
+                Calendar calendar = CalendarParser.parseICalFile(content);
+                assert calendar != null;
+                updateDB(calendar);
                 future.complete(calendar);
             } catch (ParseException e) {
                 future.completeExceptionally(e);
@@ -74,5 +72,9 @@ public class CalendarService {
         });
         return future;
     }
-}
 
+    private void updateDB(Calendar calendar) {
+        calendarRepository.deleteById(calendar.getLocation());
+        calendarRepository.save(calendar);
+    }
+}
