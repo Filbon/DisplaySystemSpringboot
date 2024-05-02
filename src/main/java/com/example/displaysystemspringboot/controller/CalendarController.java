@@ -2,6 +2,7 @@ package com.example.displaysystemspringboot.controller;
 
 import com.example.displaysystemspringboot.model.Calendar;
 import com.example.displaysystemspringboot.service.CalendarService;
+import com.example.displaysystemspringboot.service.EventFilteringService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,9 @@ public class CalendarController {
     @Autowired
     private final CalendarService calendarService;
 
+    @Autowired
+    private EventFilteringService eventFilteringService;
+
     public CalendarController(CalendarService calendarService) {
         this.calendarService = calendarService;
     }
@@ -36,6 +40,9 @@ public class CalendarController {
                     .filter(calendar -> location.equals(calendar.getLocation()))
                     .collect(Collectors.toList());
         }
+
+        // Filter events for the current day
+        calendars = eventFilteringService.filterEventsForCurrentDay(calendars);
 
         model.addAttribute("calendars", calendars);
         return "firstVersion"; // Renders the HTML template

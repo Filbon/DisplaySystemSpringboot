@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #428bc4; /* Lighter blue */
+    color: #ffffff; /* White */
+    margin: 0;
+    padding: 0;
+     /* Make the body a positioned container */
+}
+
+.logo-container {
+    position: absolute; /* Position the logo container */
+    top: 50%; /* Align the top of the logo container with the middle of the body */
+    left: 50%; /* Align the left side of the logo container with the middle of the body */
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.logo {
+    width: 200px; /* Adjust the width of the logo as needed */
+    height: auto; /* Automatically adjust the height based on the width */
+}
+
+table {
+    background-color: #005b9a; /* Primary blue */
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    background-color: #00477d; /* Slightly darker blue */
+    font-weight: bold;
+    text-align: left;
+    padding: 20px;
+}
+
+th {
+    background-color: #002b4d;
+;
+}
+.upcoming-event td {
+    background-color: #003366; /* Dark blue */
+    color: white;
+    font-weight: bold;
+    padding-top: 50px; /* Increase padding for more height */
+    padding-bottom: 50px;
+}
+
+/* Free overlay styles */
+.free-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.free-overlay img {
+    width: 100px;
+    height: auto;
+}

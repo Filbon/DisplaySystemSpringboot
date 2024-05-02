@@ -20,6 +20,9 @@ public class CalendarService {
     @Autowired
     private CalendarRepository calendarRepository;
 
+    @Autowired
+    private EventFilteringService eventFilteringService;
+
     public CompletableFuture<List<Calendar>> getCalendars() {
         CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
         List<String> urls = Arrays.asList(

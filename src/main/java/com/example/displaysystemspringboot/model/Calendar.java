@@ -50,4 +50,8 @@ public class Calendar {
     public boolean isEmpty() {
         return events.isEmpty() && Objects.equals(location, "");
     }
+
+    public void setEvents(List<CalendarEvent> currentDayEvents) {
+        this.events = currentDayEvents;
+    }
 }
