@@ -12,8 +12,7 @@
 <div th:each="calendar : ${calendars}" class="calendar">
     <table>
         <tr>
-            <th>Summary</th>
-            <th>Time</th>
+            <th colspan="2"><p id="currentDateTime"></p></th>
         </tr>
         <tr th:if="${calendar.events.isEmpty()}">
             <td colspan="2">
@@ -32,5 +31,32 @@
         </tr>
     </table>
 </div>
+<script>
+    function updateCurrentDateTime() {
+        // Get the current date and time
+        var currentDate = new Date();
+
+        // Format the date and time as desired
+        var formattedDate = currentDate.toLocaleDateString(); // Format: "5/3/2024"
+        var formattedTime = currentDate.toLocaleTimeString(); // Format: "10:30:15 AM"
+
+        // Concatenate the strings
+        var dateTimeString = "Today's meetings - " + formattedDate + ", " + formattedTime;
+
+        // Update the HTML element with the concatenated string
+        document.getElementById("currentDateTime").innerHTML = dateTimeString;
+    }
+
+    updateCurrentDateTime();
+
+    setInterval(updateCurrentDateTime, 1000);
+
+    setInterval(function() {
+        location.reload();
+    }, 5*60*1000); // 5 minutes in milliseconds
+
+
+
+</script>
 </body>
 </html>

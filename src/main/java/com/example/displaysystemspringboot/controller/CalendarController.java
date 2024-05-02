@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ public class CalendarController {
         calendars = eventFilteringService.filterEventsForCurrentDay(calendars);
 
         model.addAttribute("calendars", calendars);
+        model.addAttribute("currentDateTime", new Date());
         return "firstVersion"; // Renders the HTML template
     }
 }

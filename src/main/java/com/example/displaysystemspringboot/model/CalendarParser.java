@@ -78,6 +78,7 @@ public class CalendarParser {
                 location += line.trim();
             } else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null && isParsingCalendar) {
                 if (calendar != null) {
+                    summary = summary.replaceAll("\\\\", "");
                     calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
                     calendar.setLocation(location);
                 }
