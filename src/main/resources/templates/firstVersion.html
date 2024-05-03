@@ -1,62 +1,57 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Calendars</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
     <link rel="stylesheet" type="text/css" th:href="@{/css/newStyle.css}">
 </head>
 <body>
-<div th:each="calendar : ${calendars}" th:if="${not #lists.isEmpty(calendar.events)}" class="logo-container">
-    <img th:src="@{/css/KTH_logo_RGB_vit.png}" class="logo" alt="Logo">
-</div>
-<div th:each="calendar : ${calendars}" class="calendar">
-    <table>
-        <tr>
-            <th colspan="2"><p id="currentDateTime"></p></th>
-        </tr>
-        <tr th:if="${calendar.events.isEmpty()}">
-            <td colspan="2">
-                <div class="free-overlay">
-                    <img th:src="@{/css/KTH_logo_RGB_vit.png}" alt="KTH-logo">
-                </div>
-            </td>
-        </tr>
-        <tr th:each="event, status : ${calendar.events}" th:class="${status.index == 0} ? 'upcoming-event' : ''">
-            <td th:text="${event.summary}" th:class="'summary'"></td>
-            <td>
-                <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
-                <span> - </span>
-                <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
-            </td>
-        </tr>
-    </table>
+
+<!-- Header with Logo and Title -->
+<div class="header">
+    <!-- Logo -->
+    <div class="logo-link">
+        <img src="https://upload.wikimedia.org/wikipedia/de/thumb/f/f3/KTH_Stockholm-Logo.svg/2048px-KTH_Stockholm-Logo.svg.png" alt="Logo">
+    </div>
+    <!-- Title -->
+    <h1 class="title" th:text="'Room ' + ${#strings.arraySplit(calendars[0].location, '_')[2]} + ', Plan ' + ${#strings.arraySplit(calendars[0].location, '_')[1].substring(4)}"></h1>
+    <div id="clock" class="clock"></div>
 </div>
 <script>
-    function updateCurrentDateTime() {
-        // Get the current date and time
-        var currentDate = new Date();
-
-        // Format the date and time as desired
-        var formattedDate = currentDate.toLocaleDateString(); // Format: "5/3/2024"
-        var formattedTime = currentDate.toLocaleTimeString(); // Format: "10:30:15 AM"
-
-        // Concatenate the strings
-        var dateTimeString = "Today's meetings - " + formattedDate + ", " + formattedTime;
-
-        // Update the HTML element with the concatenated string
-        document.getElementById("currentDateTime").innerHTML = dateTimeString;
+    function updateClock() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        // Pad single digit minutes with a leading zero
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        document.getElementById('clock').innerText = hours + ':' + minutes;
     }
 
-    updateCurrentDateTime();
+    // Update the clock every minute
+    setInterval(updateClock, 60000);
 
-    setInterval(updateCurrentDateTime, 1000);
-
-    setInterval(function() {
-        location.reload();
-    }, 5*60*1000); // 5 minutes in milliseconds
-
-
-
+    // Initial call to display the clock immediately
+    updateClock();
 </script>
+
+<div class="container">
+    <div class="calendars">
+        <!-- Calendar contents -->
+        <div th:each="calendar : ${calendars}">
+            <div th:each="event : ${calendar.events}" class="meeting-details">
+                <div class="meeting-info">
+                    <p class="event-summary" th:text="${event.summary}"></p>
+                    <div class="event-details">
+                        <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
+                        <span> - </span>
+                        <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
