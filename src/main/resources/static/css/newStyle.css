@@ -1,14 +1,34 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif, Garamond, serif;
-    /* Keep the rest of your existing styles */
-    background-image: repeating-linear-gradient(45deg, #000080, #000080 50%, #000099 50%, #000099); /* Striped background */
+    background-image: linear-gradient(45deg, #0a0476 0%, #0a0476 5%,transparent 5%, transparent 10%, #0a0476 10%, #0a0476 15%,transparent 15%,transparent 20%, #0a0476 20%, #0a0476 25%,transparent 25%,transparent 30%, #0a0476 30%, #0a0476 35%,transparent 35%,transparent 40%, #0a0476 40%, #0a0476 45%,transparent 45%,transparent 50%, #0a0476 50%, #0a0476 100%,transparent 55%,transparent 60%, #0a0476 60%, #0a0476 65%,transparent 65%,transparent 70%, #0a0476 70%, #0a0476 75%,transparent 70%,transparent 80%, #0a0476 80%, #0a0476 85%,transparent 85%,transparent 90%, #0a0476 90%, #0a0476 95%,transparent 95%), linear-gradient(135deg, #0a0476 0%, #0a0476 5%,transparent 5%, transparent 10%, #0a0476 10%, #0a0476 15%,transparent 15%,transparent 20%, #0a0476 20%, #0a0476 25%,transparent 25%,transparent 30%, #0a0476 30%, #0a0476 35%,transparent 35%,transparent 40%, #0a0476 40%, #0a0476 45%,transparent 45%,transparent 50%, #0a0476 50%, #0a0476 55%,transparent 55%,transparent 60%, #0a0476 60%, #0a0476 65%,transparent 65%,transparent 70%, #0a0476 70%, #0a0476 75%,transparent 70%,transparent 80%, #0a0476 80%, #0a0476 85%,transparent 85%,transparent 90%, #0a0476 90%, #0a0476 95%,transparent 95%);
+    background-size: 3em 3em;
+    background-color: rgba(54, 2, 224, 0.7); /* Adjust the alpha value to control transparency */
+    opacity: 0.9;
     margin: 0;
     padding: 0;
-    color: #fff; /* White text color */
+    color: #fff;
+    min-height: 100vh;
+    animation: animateBackground 25s infinite linear; /* Animation properties */
+
+}
+
+/* Keyframes for background animation */
+@keyframes animateBackground {
+    0% {
+        background-position: 0 0; /* Start position */
+    }
+    100% {
+        background-position: 100% 100%; /* End position */
+    }
 }
 
 
-
+.calendars {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .container {
     max-width: 800px;
@@ -16,12 +36,12 @@ body {
 }
 
 .header {
-    background-color: #008B8B; /* Apply Cadet Blue background color to the header */
-    padding: 8px; /* Adjusted padding */
-    margin: 10px; /* Combined margin shorthand */
+    background-color: #008B8B;
+    padding: 8px;
+    margin: 10px;
     display: flex;
-    align-items: center; /* Vertically center the logo and title */
-    justify-content: space-between; /* Ensure items are spread evenly */
+    align-items: center;
+    justify-content: space-between;
 }
 .logo-link img {
     width: 70px;
@@ -34,53 +54,66 @@ body {
 }
 
 .clock {
-    font-family: Helvetica, serif; /* Change font family to Georgia */
-    font-size: 30px;
-    color: #fff; /* White clock color */
-    margin-right: 10px; /* Add margin to the right */
-}
-
-.calendars {
-    display: flex;
-    flex-direction: column; /* Display calendars vertically */
-    align-items: center;
+    font-family: Helvetica, serif;
+    font-size: 40px;
+    color: #fff;
+    margin-right: 10px;
 }
 
 .meeting-details {
     width: 100%;
     margin-top: 20px;
-    display: flex; /* Use flexbox for better alignment */
-    flex-wrap: wrap; /* Allow items to wrap to next line */
-    justify-content: space-between; /* Spread items evenly */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .meeting-info {
-    background-color: #F0F8FF; /* Light gray background for event boxes */
-    padding: 20px; /* Maintain padding for consistent appearance */
+    background-color: #F0F8FF;
+    padding: 20px;
     border-radius: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
-    margin-bottom: 20px; /* Maintain margin bottom for spacing */
-    width: 300px; /* Set a fixed width for the boxes */
-    color: #fff; /* Dark text color for event details */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 300px;
+    color: #fff;
+    position: relative; /* Position relative for absolute positioning of time */
+
+}
+
+.meeting-info .event-details {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 30px; /* Increased padding for more space */
+    background-color: #B0C4DE; /* Slightly darker blue */
+    border-top-right-radius: 16px; /* Ensure border radius matches parent */
+    border-bottom-left-radius: 16px; /* Ensure border radius matches parent */
+    height: 100%; /* Ensure same height as the parent meeting-info box */
+    box-sizing: border-box; /* Include padding in height calculation */
+    color: black; /* Changed text color to black */
+    border-left: 4px solid black; /* Add a straight left border */
+    font-size: 20px; /* Adjusted font size */
+    font-weight: bold; /* Make the text bold */
+    line-height: 1.5; /* Adjust line height for alignment */
 
 }
 
 @media screen and (min-width: 768px) {
     .meeting-info {
-        width: 1300px; /* Adjust width for larger screens if needed */
+        width: 1300px;
     }
 }
 
 .event-summary {
     font-weight: bold;
     font-size: 18px;
-    color: #111; /* Darker text color for event summary */
+    color: #111;
     margin-bottom: 10px;
 }
 
 .event-details {
     font-size: 14px;
-    color: #555; /* Darker text color for event details */
+    color: #555;
 }
 
 .event-time,
@@ -88,12 +121,35 @@ body {
     margin: 5px 0;
 }
 
-/* Additional styles from newStyle.css */
 .room-name {
-    color: #F0F8FF; /* Dark blue color for the room name */
+    color: #F0F8FF;
     font-size: 22px;
     margin-top: 20px;
     margin-bottom: 10px;
-    text-align: center; /* Center align room name */
-
+    text-align: center;
 }
+
+.qr-code {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-code img {
+    max-width: 65%;
+    max-height: 65%;
+}
+
+.date-time {
+     font-size: 18px;
+}
+

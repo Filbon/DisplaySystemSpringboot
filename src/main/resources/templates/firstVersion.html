@@ -8,16 +8,14 @@
 </head>
 <body>
 
-<!-- Header with Logo and Title -->
 <div class="header">
-    <!-- Logo -->
     <div class="logo-link">
         <img src="https://upload.wikimedia.org/wikipedia/de/thumb/f/f3/KTH_Stockholm-Logo.svg/2048px-KTH_Stockholm-Logo.svg.png" alt="Logo">
     </div>
-    <!-- Title -->
     <h1 class="title" th:text="'Room ' + ${#strings.arraySplit(calendars[0].location, '_')[2]} + ', Plan ' + ${#strings.arraySplit(calendars[0].location, '_')[1].substring(4)}"></h1>
-    <div id="clock" class="clock"></div>
+    <div id="date-time" class="date-time"></div>
 </div>
+
 <script>
     function updateClock() {
         var now = new Date();
@@ -28,26 +26,42 @@
         document.getElementById('clock').innerText = hours + ':' + minutes;
     }
 
-    // Update the clock every minute
+    function displayDateTime() {
+        var now = new Date();
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var date = now.toLocaleDateString(undefined, options);
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        // Pad single digit minutes with a leading zero
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var time = hours + ':' + minutes;
+        document.getElementById('date-time').innerText = date + ' ' + time;
+    }
+
     setInterval(updateClock, 60000);
 
-    // Initial call to display the clock immediately
+    displayDateTime();
+
     updateClock();
+
+    setTimeout(function() {
+        location.reload();
+    }, 5 * 60 * 1000);
 </script>
 
-<div class="container">
-    <div class="calendars">
-        <!-- Calendar contents -->
-        <div th:each="calendar : ${calendars}">
-            <div th:each="event : ${calendar.events}" class="meeting-details">
-                <div class="meeting-info">
-                    <p class="event-summary" th:text="${event.summary}"></p>
-                    <div class="event-details">
-                        <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
-                        <span> - </span>
-                        <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
-                    </div>
+<div class="calendars">
+    <div th:each="calendar : ${calendars}">
+        <div th:each="event : ${calendar.events}" class="meeting-details">
+            <div class="meeting-info">
+                <p class="event-summary" th:text="${event.summary}"></p>
+                <div class="event-details">
+                    <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
+                    <span> - </span>
+                    <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
                 </div>
+            </div>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data=Meeting%20Details%0AEvent%3A%20${event.summary}%0AStart%3A%20${#dates.format(event.startDate, 'HH:mm')}%0AEnd%3A%20${#dates.format(event.endDate, 'HH:mm')}&size=80x80" alt="QR Code">
             </div>
         </div>
     </div>
