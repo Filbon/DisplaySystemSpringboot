@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class CalendarParser {
-    private static final TimeZone UTC_PLUS_2 = TimeZone.getTimeZone("UTC+2");
+
     public static Calendar parseICalFile(String content) throws ParseException {
 
         Calendar calendar = null;
@@ -62,11 +62,11 @@ public class CalendarParser {
                 uid += line.trim();
                 isParsingUid = false;
             }  else if (line.startsWith("DTSTART;")) {
-                startDate = parseDate(line.substring("DTSTART;".length()), nextLine);
+                startDate = parseDate(line.substring("DTSTART;".length()), nextLine, content);
                 isParsingSummary = false;
                 isParsingUid = false;
             } else if (line.startsWith("DTEND;")) {
-                endDate = parseDate(line.substring("DTEND;".length()), nextLine);
+                endDate = parseDate(line.substring("DTEND;".length()), nextLine, content);
                 isParsingSummary = false;
                 isParsingUid = false;
             } else if (line.startsWith("LOCATION:") && location == null) {
@@ -105,7 +105,7 @@ public class CalendarParser {
         return location;
     }
 
-    private static Date parseDate(String dateString, String nextLine) throws ParseException {
+    private static Date parseDate(String dateString, String nextLine, String content) throws ParseException {
         Pattern pattern = Pattern.compile(":([^:]+)$");
         Matcher matcher = pattern.matcher(dateString);
         if (matcher.find()) {
@@ -114,11 +114,27 @@ public class CalendarParser {
                 dateStr += nextLine.trim();
             }
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-            format.setTimeZone(UTC_PLUS_2); // Set time zone to UTC+2
-            return format.parse(dateStr);
+
+            // Extracting timezone offset
+            Pattern tzOffsetPattern = Pattern.compile("TZOFFSETTO:([-+]\\d{2})(\\d{2})");
+            Matcher tzOffsetMatcher = tzOffsetPattern.matcher(content);
+            int timeZoneOffsetHour = 0;
+            int timeZoneOffsetMinute = 0;
+            if (tzOffsetMatcher.find()) {
+                timeZoneOffsetHour = Integer.parseInt(tzOffsetMatcher.group(1));
+                timeZoneOffsetMinute = Integer.parseInt(tzOffsetMatcher.group(2));
+            }
+
+            // Adjusting the date and time based on timezone offset
+            Date date = format.parse(dateStr);
+            long timeInMillis = date.getTime();
+            timeInMillis += (timeZoneOffsetHour * 60 * 60 * 1000) + (timeZoneOffsetMinute * 60 * 1000);
+
+            return new Date(timeInMillis);
         } else {
             throw new ParseException("Unable to parse date string: " + dateString, 0);
         }
     }
+
 }
 

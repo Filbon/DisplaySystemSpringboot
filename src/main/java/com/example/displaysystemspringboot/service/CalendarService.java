@@ -5,6 +5,7 @@ import com.example.displaysystemspringboot.model.CalendarParser;
 import com.example.displaysystemspringboot.repository.CalendarRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -23,18 +24,12 @@ public class CalendarService {
     @Autowired
     private EventFilteringService eventFilteringService;
 
+    @Value("#{'${calendar.locations}'.split(',')}")
+    private List<String> locations;
+
     public CompletableFuture<List<Calendar>> getCalendars() {
         CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
-        List<String> urls = Arrays.asList(
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7327@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan9_9504@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan6_6316@ug.kth.se/Calendar/calendar.ics"
-
-
-                );
-
+        List<String> urls = generateUrls(locations);
         CompletableFuture<Void> fetchAll = fetchAndStoreCalendars(urls);
         fetchAll.thenCompose((Void) -> retrieveCalendarsFromDatabase())
                 .thenAccept(future::complete)
@@ -50,6 +45,11 @@ public class CalendarService {
                 });
 
         return future;
+    }
+    private List<String> generateUrls(List<String> locations) {
+        return locations.stream()
+                .map(location -> "https://webmail.kth.se/owa/calendar/" + location + "@ug.kth.se/Calendar/calendar.ics")
+                .collect(Collectors.toList());
     }
 
     private CompletableFuture<Void> fetchAndStoreCalendars(List<String> urls) {
