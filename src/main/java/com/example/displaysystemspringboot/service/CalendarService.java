@@ -23,15 +23,12 @@ public class CalendarService {
     @Autowired
     private EventFilteringService eventFilteringService;
 
-    public CompletableFuture<List<Calendar>> getCalendars() {
+    public CompletableFuture<List<Calendar>> getCalendars(List<String> locations) {
         CompletableFuture<List<Calendar>> future = new CompletableFuture<>();
-        List<String> urls = Arrays.asList(
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7319@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7320@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan7_7327@ug.kth.se/Calendar/calendar.ics",
-                "https://webmail.kth.se/owa/calendar/sth_plan9_9504@ug.kth.se/Calendar/calendar.ics"
 
-        );
+        List<String> urls = locations.stream()
+                .map(this::generateUrlFromLocation)
+                .collect(Collectors.toList());
 
         CompletableFuture<Void> fetchAll = fetchAndStoreCalendars(urls);
         fetchAll.thenCompose((Void) -> retrieveCalendarsFromDatabase())
@@ -48,6 +45,10 @@ public class CalendarService {
                 });
 
         return future;
+    }
+
+    private String generateUrlFromLocation(String location) {
+        return "https://webmail.kth.se/owa/calendar/" + location + "/Calendar/calendar.ics";
     }
 
     private CompletableFuture<Void> fetchAndStoreCalendars(List<String> urls) {
