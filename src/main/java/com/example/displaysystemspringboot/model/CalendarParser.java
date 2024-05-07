@@ -62,11 +62,11 @@ public class CalendarParser {
                 uid += line.trim();
                 isParsingUid = false;
             }  else if (line.startsWith("DTSTART;")) {
-                startDate = parseDate(line.substring("DTSTART;".length()), nextLine, content);
+                startDate = parseDate(line.substring("DTSTART;".length()), nextLine);
                 isParsingSummary = false;
                 isParsingUid = false;
             } else if (line.startsWith("DTEND;")) {
-                endDate = parseDate(line.substring("DTEND;".length()), nextLine, content);
+                endDate = parseDate(line.substring("DTEND;".length()), nextLine);
                 isParsingSummary = false;
                 isParsingUid = false;
             } else if (line.startsWith("LOCATION:") && location == null) {
@@ -105,36 +105,20 @@ public class CalendarParser {
         return location;
     }
 
-    private static Date parseDate(String dateString, String nextLine, String content) throws ParseException {
+    private static Date parseDate(String dateString, String nextLine) throws ParseException {
         Pattern pattern = Pattern.compile(":([^:]+)$");
         Matcher matcher = pattern.matcher(dateString);
         if (matcher.find()) {
             String dateStr = matcher.group(1);
             if (nextLine != null && nextLine.startsWith(" ")) {
-                dateStr += nextLine.trim();
+                dateStr += nextLine.trim(); // Concatenate with the next line
             }
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-
-            // Extracting timezone offset
-            Pattern tzOffsetPattern = Pattern.compile("TZOFFSETTO:([-+]\\d{2})(\\d{2})");
-            Matcher tzOffsetMatcher = tzOffsetPattern.matcher(content);
-            int timeZoneOffsetHour = 0;
-            int timeZoneOffsetMinute = 0;
-            if (tzOffsetMatcher.find()) {
-                timeZoneOffsetHour = Integer.parseInt(tzOffsetMatcher.group(1));
-                timeZoneOffsetMinute = Integer.parseInt(tzOffsetMatcher.group(2));
-            }
-
-            // Adjusting the date and time based on timezone offset
-            Date date = format.parse(dateStr);
-            long timeInMillis = date.getTime();
-            timeInMillis += (timeZoneOffsetHour * 60 * 60 * 1000) + (timeZoneOffsetMinute * 60 * 1000);
-
-            return new Date(timeInMillis);
+            return format.parse(dateStr);
         } else {
             throw new ParseException("Unable to parse date string: " + dateString, 0);
         }
     }
 
-}
 
+}
