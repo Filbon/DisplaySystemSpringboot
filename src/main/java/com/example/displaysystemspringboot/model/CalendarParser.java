@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 
 @Component
 public class CalendarParser {
+    private static final TimeZone UTC_PLUS_2 = TimeZone.getTimeZone("UTC+2");
     public static Calendar parseICalFile(String content) throws ParseException {
+
         Calendar calendar = null;
         List<Calendar> calendars = new ArrayList<>();
         String[] lines = content.split("\\r?\\n");
@@ -112,7 +114,7 @@ public class CalendarParser {
                 dateStr += nextLine.trim();
             }
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            format.setTimeZone(UTC_PLUS_2); // Set time zone to UTC+2
             return format.parse(dateStr);
         } else {
             throw new ParseException("Unable to parse date string: " + dateString, 0);

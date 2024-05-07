@@ -4,7 +4,6 @@ import com.example.displaysystemspringboot.model.Calendar;
 import com.example.displaysystemspringboot.service.CalendarService;
 import com.example.displaysystemspringboot.service.EventFilteringService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -28,16 +26,13 @@ public class CalendarController {
     @Autowired
     private EventFilteringService eventFilteringService;
 
-    private List<String> locations;
-
-    public CalendarController(CalendarService calendarService, @Value("${calendar.locations}") String[] locationsArray) {
+    public CalendarController(CalendarService calendarService) {
         this.calendarService = calendarService;
-        this.locations = Arrays.asList(locationsArray);
     }
 
     @GetMapping("/calendars")
     public String showCalendars(@RequestParam(required = false) String location, Model model) {
-        CompletableFuture<List<Calendar>> calendarsFuture = calendarService.getCalendars(locations);
+        CompletableFuture<List<Calendar>> calendarsFuture = calendarService.getCalendars();
         List<Calendar> calendars = calendarsFuture.join(); // Wait for completion
 
         if (location != null && !location.isEmpty()) {
@@ -63,15 +58,12 @@ class CalendarRestController {
     @Autowired
     private final CalendarService calendarService;
 
-    private List<String> locations;
-
-    public CalendarRestController(CalendarService calendarService, @Value("${calendar.locations}") String[] locationsArray) {
+    public CalendarRestController(CalendarService calendarService) {
         this.calendarService = calendarService;
-        this.locations = Arrays.asList(locationsArray);
     }
 
     @GetMapping
     public CompletableFuture<List<Calendar>> getCal() {
-        return calendarService.getCalendars(locations); // Returns the list of calendars as JSON
+        return calendarService.getCalendars(); // Returns the list of calendars as JSON
     }
 }
