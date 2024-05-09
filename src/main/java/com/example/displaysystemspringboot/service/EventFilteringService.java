@@ -5,6 +5,7 @@ import com.example.displaysystemspringboot.model.CalendarEvent;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +26,14 @@ public class EventFilteringService {
     }
 
     private boolean isEventOnCurrentDay(CalendarEvent event, Date currentDate) {
-        LocalDate eventDate = event.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate currentDateWithoutTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return eventDate.equals(currentDateWithoutTime);
+        LocalDateTime eventStartDateTime = event.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime eventEndDateTime = event.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime currentDateTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        // Check if the event starts and ends on the current day, or if it's ongoing
+        return (eventStartDateTime.toLocalDate().equals(currentDateTime.toLocalDate()) &&
+                eventEndDateTime.toLocalDate().equals(currentDateTime.toLocalDate())) ||
+                (eventStartDateTime.isBefore(currentDateTime) && eventEndDateTime.isAfter(currentDateTime));
     }
+
 }

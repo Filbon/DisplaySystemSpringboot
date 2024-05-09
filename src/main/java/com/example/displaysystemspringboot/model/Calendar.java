@@ -54,4 +54,7 @@ public class Calendar {
     public void setEvents(List<CalendarEvent> currentDayEvents) {
         this.events = currentDayEvents;
     }
+    public void addEvents(List<CalendarEvent> events) {
+        this.events.addAll(events);
+    }
 }

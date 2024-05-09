@@ -33,6 +33,8 @@ public class CalendarEvent {
         this.location = location;
         this.uid = uid;
     }
+
+
     public String getUid() {return uid;}
 
     public void setUid(String uid) {this.uid = uid;}
@@ -68,6 +70,7 @@ public class CalendarEvent {
     public void setLocation(String location) {
         this.location = location;
     }
+
 
     @Override
     public String toString() {

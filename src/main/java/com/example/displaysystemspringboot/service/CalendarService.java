@@ -55,7 +55,7 @@ public class CalendarService {
     private CompletableFuture<Void> fetchAndStoreCalendars(List<String> urls) {
         List<CompletableFuture<Void>> fetchFutures = urls.stream()
                 .map(this::fetchAndStoreCalendar)
-                .collect(Collectors.toList());
+                .toList();
         return CompletableFuture.allOf(fetchFutures.toArray(new CompletableFuture[0]));
     }
 
@@ -63,7 +63,9 @@ public class CalendarService {
         CompletableFuture<Void> future = new CompletableFuture<>();
         fetchCalendar(url)
                 .thenAccept(calendar -> {
-                    calendarRepository.save(calendar);
+                    if(!calendar.getEvents().isEmpty()){
+                        calendarRepository.save(calendar);
+                    }
                     future.complete(null);
                 })
                 .exceptionally(ex -> {

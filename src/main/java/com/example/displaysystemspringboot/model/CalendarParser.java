@@ -58,7 +58,13 @@ public class CalendarParser {
             } if (line.startsWith("UID:") && uid == null) {
                 uid = line.substring("UID:".length()).trim();
                 isParsingUid = true;
-            } else if (isParsingUid && line.startsWith(" ")) {
+            } /*else if (line.startsWith("RRULE:")) {
+                String rrule = line.substring("RRULE:".length()).trim();
+                List<CalendarEvent> recurringEvents = RecurringEventGenerator.generateRecurringEvents(summary, startDate, endDate, location, uid, rrule);
+                if (calendar != null) {
+                    calendar.addEvents(recurringEvents);
+                }
+            }*/else if (isParsingUid && line.startsWith(" ")) {
                 uid += line.trim();
                 isParsingUid = false;
             }  else if (line.startsWith("DTSTART;")) {
@@ -82,13 +88,15 @@ public class CalendarParser {
                 if (calendar != null) {
                     summary = summary.replaceAll("\\\\", "");
                     calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
-                    calendar.setLocation(location);
+                    if(calendar.getLocation()==null) {
+                        calendar.setLocation(location);
+                    }
                 }
             }
         }
         System.out.println(calendar);
-        // Return all calendars found
-        return calendars.isEmpty() ? null : calendars.get(0); // Return the first calendar found (assuming all events belong to the same location)
+
+        return calendars.isEmpty() ? null : calendars.get(0);
     }
 
     private static String parseLocation(String location) {
@@ -102,6 +110,8 @@ public class CalendarParser {
         if (location.endsWith("\\")) {
             location = location.substring(0, location.length() - 1);
         }
+        location = location.replaceAll(";","");
+        location = location.replaceAll("\\\\", "");
         return location;
     }
 
