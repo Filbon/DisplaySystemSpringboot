@@ -1,71 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Calendars</title>
-    <link rel="stylesheet" type="text/css" href="/css/styles.css">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/newStyle.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+    <title>KTH Schedule</title>
 </head>
 <body>
-
-<div class="header">
-    <div class="logo-link">
-        <img src="https://upload.wikimedia.org/wikipedia/de/thumb/f/f3/KTH_Stockholm-Logo.svg/2048px-KTH_Stockholm-Logo.svg.png" alt="Logo">
+<!-- Nav bar -->
+<nav class="nav-section">
+    <div class="date-section">
+        <span id="timeString"></span>
+        <span id="dateString"></span>
     </div>
-    <h1 class="title" th:text="'Room ' + ${#strings.arraySplit(calendars[0].location, '_')[2]} + ', Plan ' + ${#strings.arraySplit(calendars[0].location, '_')[1].substring(4)}"></h1>
-    <div id="date-time" class="date-time"></div>
-</div>
-
-<script>
-    function updateClock() {
-        var now = new Date();
-        var hours = now.getHours();
-        var minutes = now.getMinutes();
-        // Pad single digit minutes with a leading zero
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        document.getElementById('clock').innerText = hours + ':' + minutes;
-    }
-
-    function displayDateTime() {
-        var now = new Date();
-        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        var date = now.toLocaleDateString(undefined, options);
-        var hours = now.getHours();
-        var minutes = now.getMinutes();
-        // Pad single digit minutes with a leading zero
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        var time = hours + ':' + minutes;
-        document.getElementById('date-time').innerText = date + ' ' + time;
-    }
-
-    setInterval(updateClock, 60000);
-
-    displayDateTime();
-
-    updateClock();
-
-    setTimeout(function() {
-        location.reload();
-    }, 5 * 60 * 1000);
-</script>
-
-<div class="calendars">
-    <div th:each="calendar : ${calendars}">
-        <div th:each="event : ${calendar.events}" class="meeting-details">
-            <div class="meeting-info">
-                <p class="event-summary" th:text="${event.summary}"></p>
-                <div class="event-details">
+    <span id="displayTitle" style="font-size: 25px;"></span>
+    <img th:src="@{/css/KTH_logo_RGB_vit.png}" class="kth-logo" alt="KTH-logo">
+</nav>
+<div th:each="calendar : ${calendars}" class="hero-section">
+    <table class="element-section">
+        <!-- When Calendar is empty -->
+        <tr th:if="${calendar.events.isEmpty()}">
+            <td>
+                <div class="idle-section">
+                    <span>Vacant</span>
+                </div>
+            </td>
+        </tr>
+        <!-- Calendar Data -->
+        <tr th:each="event, status : ${calendar.events}"
+            th:class="${status.index == 0} ? 'upcoming-event' : ''">
+            <td>
+                <div>
                     <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
                     <span> - </span>
                     <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
                 </div>
-            </div>
-            <div class="qr-code">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?data=Meeting%20Details%0AEvent%3A%20${event.summary}%0AStart%3A%20${#dates.format(event.startDate, 'HH:mm')}%0AEnd%3A%20${#dates.format(event.endDate, 'HH:mm')}&size=80x80" alt="QR Code">
-            </div>
-        </div>
-    </div>
+            </td>
+            <td th:text="${event.summary}" th:class="'summary'"></td>
+        </tr>
+    </table>
 </div>
+<script>
 
+    document.addEventListener("DOMContentLoaded", function() {
+      const idleSections = document.querySelectorAll('.idle-section');
+      const dateSections = document.querySelectorAll('.date-section');
+
+      dateSections.forEach(function(section) {
+        section.style.display = "flex";
+        section.style.flexDirection = "column";
+        section.style.alignItems = "center";
+        section.style.paddingLeft = "20px";
+      })
+
+      idleSections.forEach(function(section) {
+        section.style.position = 'absolute';
+        section.style.top = '48%';
+        section.style.left = 'calc(100vw / 2 - 160px)';
+        section.style.fontSize = "100px";
+      });
+    });
+
+    function updateCurrentDateTime() {
+        // Get the current date and time
+        let currentDate = new Date();
+
+        // Get local date and time in string
+        let localDate = currentDate.toLocaleDateString(); // "5/3/2024"
+        let localTime = currentDate.toLocaleTimeString().slice(0, 5); // "10:30"
+        // localTime = localTime.slice(0, 5);
+
+        // Update the HTML element with the concatenated string
+        document.querySelector("#displayTitle").textContent = "KTH Schedule";
+        document.querySelector("#timeString").textContent = localTime;
+        document.querySelector("#dateString").textContent = localDate;
+    }
+
+    setInterval(updateCurrentDateTime, 1000);
+
+    setInterval(function() {
+        location.reload();
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+
+</script>
+<div class="qr-code-container" th:each="calendar : ${calendars}">
+    <img class="qr-code-img" th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fwebmail.kth.se%2Fowa%2Fcalendar%2F' + ${calendar.location} + '%40ug.kth.se%2FCalendar%2Fcalendar.ics'}" alt="QR Code">
+</div>
 </body>
 </html>
