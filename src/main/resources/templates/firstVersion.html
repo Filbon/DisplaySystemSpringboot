@@ -1,62 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Calendars</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/newStyle.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+  <title>KTH Schedule</title>
 </head>
 <body>
-<div th:each="calendar : ${calendars}" th:if="${not #lists.isEmpty(calendar.events)}" class="logo-container">
-    <img th:src="@{/css/KTH_logo_RGB_vit.png}" class="logo" alt="Logo">
-</div>
-<div th:each="calendar : ${calendars}" class="calendar">
-    <table>
-        <tr>
-            <th colspan="2"><p id="currentDateTime"></p></th>
-        </tr>
-        <tr th:if="${calendar.events.isEmpty()}">
-            <td colspan="2">
-                <div class="free-overlay">
-                    <img th:src="@{/css/KTH_logo_RGB_vit.png}" alt="KTH-logo">
-                </div>
-            </td>
-        </tr>
-        <tr th:each="event, status : ${calendar.events}" th:class="${status.index == 0} ? 'upcoming-event' : ''">
-            <td th:text="${event.summary}" th:class="'summary'"></td>
-            <td>
-                <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
-                <span> - </span>
-                <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
-            </td>
-        </tr>
+  <!-- Nav bar -->
+  <nav class="nav-section">
+    <div class="date-section">
+      <span id="timeString"></span>
+      <span id="dateString"></span>
+    </div>
+    <span id="displayTitle" style="font-size: 25px;"></span>
+    <img th:src="@{/css/KTH_logo_RGB_vit.png}" class="kth-logo" alt="KTH-logo">
+  </nav>
+  <div th:each="calendar : ${calendars}" class="hero-section">
+    <table class="element-section">
+      <!-- When Calendar is empty -->
+      <tr th:if="${calendar.events.isEmpty()}">
+        <td>
+          <div class="idle-section">
+            <span>Vacant</span>
+          </div>
+        </td>
+      </tr>
+      <!-- Calendar Data -->
+      <tr th:each="event, status : ${calendar.events}" 
+          th:class="${status.index == 0} ? 'upcoming-event' : ''">
+        <td>
+          <div>
+            <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
+            <span> - </span>
+            <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
+          </div>
+        </td>
+        <td th:text="${event.summary}" th:class="'summary'"></td>
+      </tr>
     </table>
-</div>
-<script>
+  </div>
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const idleSections = document.querySelectorAll('.idle-section');
+      const dateSections = document.querySelectorAll('.date-section');
+
+      dateSections.forEach(function(section) {
+        section.style.display = "flex";
+        section.style.flexDirection = "column";
+        section.style.alignItems = "center";
+        section.style.paddingLeft = "20px";
+      })
+
+      idleSections.forEach(function(section) {
+        section.style.position = 'absolute';
+        section.style.top = '48%';
+        section.style.left = 'calc(100vw / 2 - 160px)';
+        section.style.fontSize = "100px";
+      });
+    });
+
     function updateCurrentDateTime() {
         // Get the current date and time
-        var currentDate = new Date();
+        let currentDate = new Date();
 
-        // Format the date and time as desired
-        var formattedDate = currentDate.toLocaleDateString(); // Format: "5/3/2024"
-        var formattedTime = currentDate.toLocaleTimeString(); // Format: "10:30:15 AM"
-
-        // Concatenate the strings
-        var dateTimeString = "Today's meetings - " + formattedDate + ", " + formattedTime;
+        // Get local date and time in string
+        let localDate = currentDate.toLocaleDateString(); // "5/3/2024"
+        let localTime = currentDate.toLocaleTimeString().slice(0, 5); // "10:30"
+        // localTime = localTime.slice(0, 5);
 
         // Update the HTML element with the concatenated string
-        document.getElementById("currentDateTime").innerHTML = dateTimeString;
+        document.querySelector("#displayTitle").textContent = "KTH Schedule";
+        document.querySelector("#timeString").textContent = localTime;
+        document.querySelector("#dateString").textContent = localDate;
     }
-
-    updateCurrentDateTime();
 
     setInterval(updateCurrentDateTime, 1000);
 
     setInterval(function() {
         location.reload();
-    }, 5*60*1000); // 5 minutes in milliseconds
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
 
-
-
-</script>
+  </script>
 </body>
 </html>
