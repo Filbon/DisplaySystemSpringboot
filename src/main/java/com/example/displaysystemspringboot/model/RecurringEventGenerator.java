@@ -8,9 +8,8 @@ import org.dmfs.rfc5545.recur.RecurrenceRuleIterator;
 
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.Calendar;
 
 public class RecurringEventGenerator {
 
@@ -27,7 +26,6 @@ public class RecurringEventGenerator {
         RecurrenceRuleIterator it = rule.iterator(startDateTime);
 
 
-
             while (it.hasNext())
             {
                 DateTime nextInstance = it.nextDateTime();
@@ -35,9 +33,14 @@ public class RecurringEventGenerator {
                 Date date = new Date(nextInstance.getTimestamp());
 
                 Date hourlyEndDate = new Date(nextInstance.getTimestamp());
-                hourlyEndDate.setHours(endDate.getHours());
 
-                recurringEvents.add(new CalendarEvent(summary, date, hourlyEndDate, location, uid));
+                Calendar endCalendar = Calendar.getInstance();
+                endCalendar.setTime(endDate);
+                Calendar hourlyCalendar = Calendar.getInstance();
+                hourlyCalendar.setTime(hourlyEndDate);
+                hourlyCalendar.set(Calendar.HOUR_OF_DAY, endCalendar.get(Calendar.HOUR_OF_DAY));
+
+                recurringEvents.add(new CalendarEvent(summary, date, hourlyCalendar.getTime(), location, uid));
 
             }
 
