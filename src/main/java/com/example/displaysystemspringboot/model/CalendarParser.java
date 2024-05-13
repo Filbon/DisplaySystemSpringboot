@@ -95,9 +95,11 @@ public class CalendarParser {
                         List<CalendarEvent> recurringEvents = RecurringEventGenerator.generateRecurringEvents(summary, startDate, endDate, location, uid, rrule);
                         calendar.addEvents(recurringEvents);
                     }
-                    calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
-                    if(calendar.getLocation()==null) {
-                        calendar.setLocation(location);
+                    else {
+                        calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
+                        if(calendar.getLocation()==null) {
+                            calendar.setLocation(location);
+                        }
                     }
                 }
             }

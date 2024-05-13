@@ -35,7 +35,7 @@ public class RecurringEventGenerator {
                 Date date = new Date(nextInstance.getTimestamp());
 
                 Date hourlyEndDate = new Date(nextInstance.getTimestamp());
-                hourlyEndDate.setTime(endDate.getTime());
+                hourlyEndDate.setHours(endDate.getHours());
 
                 recurringEvents.add(new CalendarEvent(summary, date, hourlyEndDate, location, uid));
 
