@@ -4,6 +4,7 @@ import com.example.displaysystemspringboot.model.Calendar;
 import com.example.displaysystemspringboot.model.CalendarParser;
 import com.example.displaysystemspringboot.repository.CalendarRepository;
 import jakarta.annotation.PostConstruct;
+import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,8 @@ public class CalendarService {
                 future.complete(calendar);
             } catch (ParseException e) {
                 future.completeExceptionally(new RuntimeException("Error parsing calendar content from URL: " + url, e));
+            } catch (InvalidRecurrenceRuleException e) {
+                throw new RuntimeException(e);
             }
         });
         return future;

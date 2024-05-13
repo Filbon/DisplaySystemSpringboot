@@ -1,6 +1,7 @@
 package com.example.displaysystemspringboot.model;
 
 import com.example.displaysystemspringboot.repository.CalendarRepository;
+import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 @Component
 public class CalendarParser {
 
-    public static Calendar parseICalFile(String content) throws ParseException {
+    public static Calendar parseICalFile(String content) throws ParseException, InvalidRecurrenceRuleException {
 
         Calendar calendar = null;
         List<Calendar> calendars = new ArrayList<>();
@@ -27,9 +28,11 @@ public class CalendarParser {
         Date startDate = null;
         Date endDate = null;
         String location = null;
+        String rrule = null;
         boolean isParsingSummary = false;
         boolean isParsingUid = false;
         boolean isParsingCalendar = false; // Flag to indicate if currently parsing a calendar
+        boolean isParsingEvent = false;
 
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
@@ -45,6 +48,7 @@ public class CalendarParser {
                     isParsingCalendar = false; // Resetting parsing calendar flag
                 }
             } else if (line.startsWith("BEGIN:VEVENT")) {
+                isParsingEvent = true;
                 summary = null;
                 uid = null;
                 startDate = null;
@@ -52,19 +56,15 @@ public class CalendarParser {
                 location = null;
                 isParsingSummary = false;
                 isParsingUid = false;
+                rrule = null;
             } else if (line.startsWith("SUMMARY:") && summary == null) {
                 summary = line.substring("SUMMARY:".length()).trim();
                 isParsingSummary = true;
             } if (line.startsWith("UID:") && uid == null) {
                 uid = line.substring("UID:".length()).trim();
                 isParsingUid = true;
-            } /*else if (line.startsWith("RRULE:")) {
-                String rrule = line.substring("RRULE:".length()).trim();
-                List<CalendarEvent> recurringEvents = RecurringEventGenerator.generateRecurringEvents(summary, startDate, endDate, location, uid, rrule);
-                if (calendar != null) {
-                    calendar.addEvents(recurringEvents);
-                }
-            }*/else if (isParsingUid && line.startsWith(" ")) {
+            }
+            else if (isParsingUid && line.startsWith(" ")) {
                 uid += line.trim();
                 isParsingUid = false;
             }  else if (line.startsWith("DTSTART;")) {
@@ -84,9 +84,17 @@ public class CalendarParser {
                 isParsingSummary = false;
             } else if (!isParsingSummary && !isParsingUid && line.startsWith(" ") && location != null) {
                 location += line.trim();
-            } else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null && isParsingCalendar) {
+            } if (line.startsWith("RRULE:")&&isParsingEvent) {
+                rrule = line.substring("RRULE:".length()).trim();
+
+            }else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null && isParsingCalendar) {
+                isParsingEvent = false;
                 if (calendar != null) {
                     summary = summary.replaceAll("\\\\", "");
+                    if(rrule!=null) {
+                        List<CalendarEvent> recurringEvents = RecurringEventGenerator.generateRecurringEvents(summary, startDate, endDate, location, uid, rrule);
+                        calendar.addEvents(recurringEvents);
+                    }
                     calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
                     if(calendar.getLocation()==null) {
                         calendar.setLocation(location);
