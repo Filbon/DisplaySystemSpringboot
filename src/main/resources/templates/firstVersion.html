@@ -28,7 +28,7 @@
       </tr>
       <!-- Calendar Data -->
       <tr th:each="event, status : ${calendar.events}" 
-          th:class="${status.index == 0} ? 'upcoming-event' : 'soon-event'">
+          th:class="${status.index == 0} ? 'upcoming-event' : (${status.index == 1} ? 'soon-event' : 'near-event')">
         <td>
           <div class="meet"> <!-- nav bar-->
             <span>Next Lecture</span>
@@ -39,18 +39,8 @@
             </div>
           </div>
         </td>
-        <td th:text="${event.summary.}" th:class="'summary'"></td>
+        <td th:text="${event.summary}" th:class="'summary'"></td>
       </tr>
-      <!-- <tr class="near-event">
-        <td>
-          <div>
-            <span>16:00</span>
-            <span> - </span>
-            <span>17:00</span>
-          </div>
-        </td>
-        <td class="summary">Kyle Mudge Mats</td>
-      </tr> -->
     </table>
   </div>
   <script>
