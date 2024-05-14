@@ -1,6 +1,7 @@
 package com.example.displaysystemspringboot.model;
 
 import com.example.displaysystemspringboot.repository.CalendarRepository;
+import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -16,8 +17,8 @@ import java.util.regex.Pattern;
 
 @Component
 public class CalendarParser {
-    private static final TimeZone UTC_PLUS_2 = TimeZone.getTimeZone("UTC+2");
-    public static Calendar parseICalFile(String content) throws ParseException {
+
+    public static Calendar parseICalFile(String content) throws ParseException, InvalidRecurrenceRuleException {
 
         Calendar calendar = null;
         List<Calendar> calendars = new ArrayList<>();
@@ -27,9 +28,11 @@ public class CalendarParser {
         Date startDate = null;
         Date endDate = null;
         String location = null;
+        String rrule = null;
         boolean isParsingSummary = false;
         boolean isParsingUid = false;
         boolean isParsingCalendar = false; // Flag to indicate if currently parsing a calendar
+        boolean isParsingEvent = false;
 
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
@@ -45,6 +48,7 @@ public class CalendarParser {
                     isParsingCalendar = false; // Resetting parsing calendar flag
                 }
             } else if (line.startsWith("BEGIN:VEVENT")) {
+                isParsingEvent = true;
                 summary = null;
                 uid = null;
                 startDate = null;
@@ -52,13 +56,15 @@ public class CalendarParser {
                 location = null;
                 isParsingSummary = false;
                 isParsingUid = false;
+                rrule = null;
             } else if (line.startsWith("SUMMARY:") && summary == null) {
                 summary = line.substring("SUMMARY:".length()).trim();
                 isParsingSummary = true;
             } if (line.startsWith("UID:") && uid == null) {
                 uid = line.substring("UID:".length()).trim();
                 isParsingUid = true;
-            } else if (isParsingUid && line.startsWith(" ")) {
+            }
+            else if (isParsingUid && line.startsWith(" ")) {
                 uid += line.trim();
                 isParsingUid = false;
             }  else if (line.startsWith("DTSTART;")) {
@@ -78,17 +84,29 @@ public class CalendarParser {
                 isParsingSummary = false;
             } else if (!isParsingSummary && !isParsingUid && line.startsWith(" ") && location != null) {
                 location += line.trim();
-            } else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null && isParsingCalendar) {
+            } if (line.startsWith("RRULE:")&&isParsingEvent) {
+                rrule = line.substring("RRULE:".length()).trim();
+
+            }else if (line.startsWith("END:VEVENT") && summary != null && startDate != null && endDate != null && isParsingCalendar) {
+                isParsingEvent = false;
                 if (calendar != null) {
                     summary = summary.replaceAll("\\\\", "");
-                    calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
-                    calendar.setLocation(location);
+                    if(rrule!=null) {
+                        List<CalendarEvent> recurringEvents = RecurringEventGenerator.generateRecurringEvents(summary, startDate, endDate, location, uid, rrule);
+                        calendar.addEvents(recurringEvents);
+                    }
+                    else {
+                        calendar.addEvent(new CalendarEvent(summary.trim(), startDate, endDate, location, uid));
+                        if(calendar.getLocation()==null) {
+                            calendar.setLocation(location);
+                        }
+                    }
                 }
             }
         }
         System.out.println(calendar);
-        // Return all calendars found
-        return calendars.isEmpty() ? null : calendars.get(0); // Return the first calendar found (assuming all events belong to the same location)
+
+        return calendars.isEmpty() ? null : calendars.get(0);
     }
 
     private static String parseLocation(String location) {
@@ -102,6 +120,8 @@ public class CalendarParser {
         if (location.endsWith("\\")) {
             location = location.substring(0, location.length() - 1);
         }
+        location = location.replaceAll(";","");
+        location = location.replaceAll("\\\\", "");
         return location;
     }
 
@@ -111,14 +131,14 @@ public class CalendarParser {
         if (matcher.find()) {
             String dateStr = matcher.group(1);
             if (nextLine != null && nextLine.startsWith(" ")) {
-                dateStr += nextLine.trim();
+                dateStr += nextLine.trim(); // Concatenate with the next line
             }
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-            format.setTimeZone(UTC_PLUS_2); // Set time zone to UTC+2
             return format.parse(dateStr);
         } else {
             throw new ParseException("Unable to parse date string: " + dateString, 0);
         }
     }
-}
 
+
+}
