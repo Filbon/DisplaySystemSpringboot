@@ -28,16 +28,29 @@
       </tr>
       <!-- Calendar Data -->
       <tr th:each="event, status : ${calendar.events}" 
-          th:class="${status.index == 0} ? 'upcoming-event' : ''">
+          th:class="${status.index == 0} ? 'upcoming-event' : 'soon-event'">
         <td>
-          <div>
-            <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
-            <span> - </span>
-            <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
+          <div class="meet"> <!-- nav bar-->
+            <span>Next Lecture</span>
+            <div class="timeMeet">
+              <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
+              <span> - </span>
+              <span th:text="${#dates.format(event.endDate, 'HH:mm')}"></span>
+            </div>
           </div>
         </td>
-        <td th:text="${event.summary}" th:class="'summary'"></td>
+        <td th:text="${event.summary.}" th:class="'summary'"></td>
       </tr>
+      <!-- <tr class="near-event">
+        <td>
+          <div>
+            <span>16:00</span>
+            <span> - </span>
+            <span>17:00</span>
+          </div>
+        </td>
+        <td class="summary">Kyle Mudge Mats</td>
+      </tr> -->
     </table>
   </div>
   <script>

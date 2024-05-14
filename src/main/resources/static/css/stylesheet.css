@@ -33,20 +33,54 @@
 /* --- Main Section --- */
 
 .hero-section {
-  height: 100vh;
+  height: 80vh;
   width: 100vw;;
   background-color: red;
 }
 
 .element-section {
-  height: 100vh;
-  width: 100vw;
   display: flex;
+  height: 100%;
+  width: 100vw;
 }
 
 tbody {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.upcoming-event {
+  flex-grow: 1;
+  max-width: 430px;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.meet {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding-top: 15px;
+}
+
+.summary {
+  display: flex;
+    width: 100%;
+    height: 80%;
+    align-items: center;
+    padding-left: 15px;
+}
+
+.soon-event {
+  flex-grow: 1;
+  height: 220px;
+  max-width: 274px;
+}
+
+.near-event {
+  flex-grow: 1;
+  height: 100%;
 }
