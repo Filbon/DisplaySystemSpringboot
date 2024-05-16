@@ -4,7 +4,6 @@ import com.example.displaysystemspringboot.model.Calendar;
 import com.example.displaysystemspringboot.model.CalendarEvent;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -30,10 +29,9 @@ public class EventFilteringService {
         LocalDateTime eventEndDateTime = event.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime currentDateTime = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-        // Check if the event starts and ends on the current day, or if it's ongoing
-        return (eventStartDateTime.toLocalDate().equals(currentDateTime.toLocalDate()) &&
-                eventEndDateTime.toLocalDate().equals(currentDateTime.toLocalDate())) ||
-                (eventStartDateTime.isBefore(currentDateTime) && eventEndDateTime.isAfter(currentDateTime));
+        // Check if the event is ongoing or starts later today
+        return (eventStartDateTime.toLocalDate().equals(currentDateTime.toLocalDate()) ||
+                eventEndDateTime.toLocalDate().equals(currentDateTime.toLocalDate())) &&
+                (eventEndDateTime.isAfter(currentDateTime));
     }
-
 }
