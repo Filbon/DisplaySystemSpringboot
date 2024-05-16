@@ -8,45 +8,75 @@
   padding: 0;
   overflow: hidden;
   font-family: 'kth-font';
+  color: #000061;
 }
 
 /* ---  Nav bar --- */
 
 .nav-section {
-  display: flex;
-  flex-direction: row;
-  width: 100vw;
-  justify-content: space-evenly;
-  align-items: center;
   padding: 5px 0px;
+  background: #ebe5e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   gap: 140px;
 }
 
 .kth-logo {
-  height: 75px;
   width: 75px;
-  background-color: #004791;
+  height: 75px;
   padding: 5px;
+  background-color: #004791;
   border-radius: 10px;
 }
 
 /* --- Main Section --- */
 
-.hero-section {
-  height: 100vh;
-  width: 100vw;;
-  background-color: red;
-}
-
 .element-section {
-  height: 100vh;
-  width: 100vw;
   display: flex;
 }
 
 tbody {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.upcoming-event {
+  background-color: #f7f4f2;
+  min-width: 430px;
+  height: 220px;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 70px;
+}
+
+.soon-event {
+  background-color: #fbf9f8;
+  max-width: 274px;
+  height: 220px;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 70px;
+}
+
+.near-event {
+  background-color: white;
+  height: 100%;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-around;
+}
+
+.meet {
+  padding-top: 15px;
+  display: flex;
+  justify-content: space-around;
 }
