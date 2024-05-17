@@ -14,7 +14,7 @@
       <span id="dateString"></span>
     </div>
     <img th:src="@{/css/KTH_logo_RGB_bla.png}" class="kth-logo" alt="KTH-logo">
-    <span style="font-size: 25px;">Room</span>
+    <span style="font-size: 25px;" th:text="${calendar.getRoomNum()}"></span>
   </nav>
   <div th:each="calendar : ${calendars}" class="hero-section">
     <table class="element-section">

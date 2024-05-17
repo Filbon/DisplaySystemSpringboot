@@ -1,12 +1,8 @@
 package com.example.displaysystemspringboot.model;
 
-import com.example.displaysystemspringboot.repository.CalendarRepository;
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -29,6 +25,7 @@ public class CalendarParser {
         Date endDate = null;
         String location = null;
         String rrule = null;
+        String  roomNum = null;
         boolean isParsingSummary = false;
         boolean isParsingUid = false;
         boolean isParsingCalendar = false; // Flag to indicate if currently parsing a calendar
@@ -42,8 +39,10 @@ public class CalendarParser {
                 calendar = new Calendar(null); // Creating a new calendar
                 isParsingCalendar = true; // Now parsing a calendar
                 location = null; // Resetting location
+                roomNum = null;
             } else if (line.startsWith("END:VCALENDAR")) { // End of a calendar
                 if (calendar != null) { // Add calendar only if it's not null
+                    calendar.setRoomNum(roomNum);
                     calendars.add(calendar);
                     isParsingCalendar = false; // Resetting parsing calendar flag
                 }
@@ -77,6 +76,9 @@ public class CalendarParser {
                 isParsingUid = false;
             } else if (line.startsWith("LOCATION:") && location == null) {
                 location = parseLocation(line.substring("LOCATION:".length()).trim());
+                if(roomNum == null) {
+                    roomNum = parseRoomNum(location);
+                }
                 isParsingSummary = false;
                 isParsingUid = false;
             } else if (isParsingSummary && line.startsWith(" ")) {
@@ -140,5 +142,7 @@ public class CalendarParser {
         }
     }
 
-
+    private static String parseRoomNum(String location) {
+        return location.substring(10);
+    }
 }

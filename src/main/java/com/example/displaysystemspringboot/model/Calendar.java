@@ -15,7 +15,7 @@ public class Calendar {
     @Id // Specifies the name of the field in the MongoDB document
     private String location;
 
-    private String room;
+    private String roomNum;
 
     @Field("events") // Example of renaming the field in the MongoDB document
     private List<CalendarEvent> events;
@@ -49,11 +49,6 @@ public class Calendar {
         return location;
     }
 
-    public String getRoom() {
-      String room = location;
-      return room;
-    }
-
     public boolean isEmpty() {
         return events.isEmpty() && Objects.equals(location, "");
     }
@@ -63,5 +58,13 @@ public class Calendar {
     }
     public void addEvents(List<CalendarEvent> events) {
         this.events.addAll(events);
+    }
+
+    public void setRoomNum(String num) {
+        roomNum = num;
+    }
+
+    public String getRoomNum() {
+        return roomNum;
     }
 }
