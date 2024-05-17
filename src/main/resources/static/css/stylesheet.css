@@ -14,7 +14,8 @@
 /* ---  Nav bar --- */
 
 .nav-section {
-  padding: 5px 0px;
+  height: 20vh;
+  padding: 8px 0px;
   background: #ebe5e0;
   display: flex;
   align-items: center;
@@ -24,55 +25,51 @@
 
 .kth-logo {
   width: 75px;
-  height: 75px;
-  padding: 5px;
-  background-color: #004791;
-  border-radius: 10px;
 }
 
 /* --- Main Section --- */
 
+.hero-section {
+  height: 80vh;
+}
+
 .element-section {
   display: flex;
+  height: 100%;
 }
 
 tbody {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
-.upcoming-event {
-  background-color: #f7f4f2;
-  min-width: 430px;
-  height: 220px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  gap: 70px;
-}
-
-.soon-event {
-  background-color: #fbf9f8;
-  max-width: 274px;
-  height: 220px;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  gap: 70px;
-}
-
-.near-event {
+.current-meeting {
   background-color: white;
-  height: 100%;
+  width: 100vw;
+  height: 230px;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  gap: 40px;
+  gap: 70px;
+}
+
+.upcoming-meeting {
+  background-color: #ebe5e0;
+  height: 100%;
+  width: 200px;
+  display: flex;
+  flex-grow: 2;
+  flex-direction: column;
+  gap: 30px;
+  border-right: solid white 1px;
+  border-left: solid white 1px;
 }
 
 .summary {
   display: flex;
   justify-content: space-around;
+  margin: 0 10px;
 }
 
 .meet {

@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
-  <title>KTH Schedule</title>
+  <title>KTH Meeting</title>
 </head>
 <body>
   <!-- Nav bar -->
-  <nav class="nav-section">
+  <nav th:with="calendar=${calendars[0]}" class="nav-section">
     <div class="date-section">
       <span id="timeString"></span>
       <span id="dateString"></span>
     </div>
-    <span id="displayTitle" style="font-size: 25px;"></span>
-    <img th:src="@{/css/KTH_logo_RGB_vit.png}" class="kth-logo" alt="KTH-logo">
+    <img th:src="@{/css/KTH_logo_RGB_bla.png}" class="kth-logo" alt="KTH-logo">
+    <span style="font-size: 25px;">Room</span>
   </nav>
   <div th:each="calendar : ${calendars}" class="hero-section">
     <table class="element-section">
@@ -28,10 +28,10 @@
       </tr>
       <!-- Calendar Data -->
       <tr th:each="event, status : ${calendar.events}" 
-          th:class="${status.index == 0} ? 'upcoming-event' : (${status.index == 1} ? 'soon-event' : 'near-event')">
+          th:class="${status.index == 0} ? 'current-meeting' : 'upcoming-meeting'">
         <td>
           <div class="meet"> <!-- nav bar-->
-            <span>Next Lecture</span>
+            <span id="textMeet">Next Meeting</span>
             <div class="timeMeet">
               <span th:text="${#dates.format(event.startDate, 'HH:mm')}"></span>
               <span> - </span>
@@ -45,7 +45,24 @@
   </div>
   <script>
 
+    // When contnent is loaded certain things is being changed
     document.addEventListener("DOMContentLoaded", function() {
+      // Select the first element with the class 'upcoming-event'
+      const currentMeeting = document.querySelector('.current-meeting');
+
+      // Check if the 'current-meeting' was found
+      if (currentMeeting) {
+        // Select the 'textMeet' element within the 'current-meeting' context
+        const textMeet = currentMeeting.querySelector('#textMeet');
+  
+        // Check if the 'textMeet' element was found
+        if (textMeet) {
+          // You can now manipulate the 'textMeet' element, for example:
+          textMeet.textContent = 'Current Meeting';
+        }
+      }
+      
+      // Select sections and change it styles
       const idleSections = document.querySelectorAll('.idle-section');
       const dateSections = document.querySelectorAll('.date-section');
 
@@ -53,7 +70,6 @@
         section.style.display = "flex";
         section.style.flexDirection = "column";
         section.style.alignItems = "center";
-        section.style.paddingLeft = "20px";
       })
 
       idleSections.forEach(function(section) {
@@ -71,10 +87,8 @@
         // Get local date and time in string
         let localDate = currentDate.toLocaleDateString(); // "5/3/2024"
         let localTime = currentDate.toLocaleTimeString().slice(0, 5); // "10:30"
-        // localTime = localTime.slice(0, 5);
 
-        // Update the HTML element with the concatenated string
-        document.querySelector("#displayTitle").textContent = "KTH Schedule";
+        // Display it to the screen
         document.querySelector("#timeString").textContent = localTime;
         document.querySelector("#dateString").textContent = localDate;
     }

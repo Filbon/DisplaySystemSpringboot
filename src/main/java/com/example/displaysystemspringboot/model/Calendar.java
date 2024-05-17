@@ -15,6 +15,8 @@ public class Calendar {
     @Id // Specifies the name of the field in the MongoDB document
     private String location;
 
+    private String room;
+
     @Field("events") // Example of renaming the field in the MongoDB document
     private List<CalendarEvent> events;
 
@@ -45,6 +47,11 @@ public class Calendar {
 
     public String getLocation() {
         return location;
+    }
+
+    public String getRoom() {
+      String room = location;
+      return room;
     }
 
     public boolean isEmpty() {
